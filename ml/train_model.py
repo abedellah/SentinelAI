@@ -21,7 +21,7 @@ EXPECTED_LABELS = [
 
 def preprocess_data(df):
     """Prétraitement des données"""
-    print("📊 Prétraitement des données...")
+    print("Prétraitement des données...")
     
     # Sélection des colonnes obligatoires
     required_cols = ['destination_port', 'flow_duration', 'flow_bytes_per_second', 
@@ -41,23 +41,23 @@ def preprocess_data(df):
     # Filtrer uniquement les labels attendus
     df = df[df['Label'].isin(EXPECTED_LABELS)]
     
-    print(f"✓ Données nettoyées : {len(df)} lignes")
-    print(f"✓ Distribution des labels :")
+    print(f"Données nettoyées : {len(df)} lignes")
+    print(f"Distribution des labels :")
     print(df['Label'].value_counts())
     
     return df
 
 def train_model():
     """Entraînement du modèle RandomForest"""
-    print("🚀 Démarrage de l'entraînement du modèle...")
+    print("Démarrage de l'entraînement du modèle...")
     
     # Chargement du dataset
     if not os.path.exists(DATASET_PATH):
         raise FileNotFoundError(f"Dataset introuvable : {DATASET_PATH}")
     
-    print(f"📂 Chargement du dataset : {DATASET_PATH}")
+    print(f"Chargement du dataset : {DATASET_PATH}")
     df = pd.read_csv(DATASET_PATH)
-    print(f"✓ Dataset chargé : {len(df)} lignes, {len(df.columns)} colonnes")
+    print(f"Dataset chargé : {len(df)} lignes, {len(df.columns)} colonnes")
     
     # Prétraitement
     df = preprocess_data(df)
@@ -75,10 +75,10 @@ def train_model():
         X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
     )
     
-    print(f"✓ Train : {len(X_train)} lignes | Test : {len(X_test)} lignes")
+    print(f"Train : {len(X_train)} lignes | Test : {len(X_test)} lignes")
     
     # Entraînement RandomForest
-    print("🌲 Entraînement du RandomForest...")
+    print("Entraînement du RandomForest...")
     rf_model = RandomForestClassifier(
         n_estimators=100,
         max_depth=20,
@@ -88,14 +88,14 @@ def train_model():
     )
     
     rf_model.fit(X_train, y_train)
-    print("✓ Modèle entraîné")
+    print("Modèle entraîné")
     
     # Évaluation
     y_pred = rf_model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"\n📈 Accuracy : {accuracy:.4f} ({accuracy*100:.2f}%)")
+    print(f"\nAccuracy : {accuracy:.4f} ({accuracy*100:.2f}%)")
     
-    print("\n📊 Rapport de classification :")
+    print("\nRapport de classification :")
     print(classification_report(y_test, y_pred, target_names=label_encoder.classes_))
     
     # Sauvegarde du modèle + encoder
@@ -107,7 +107,7 @@ def train_model():
     
     os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
     joblib.dump(model_data, MODEL_PATH)
-    print(f"\n✅ Modèle sauvegardé : {MODEL_PATH}")
+    print(f"\nModèle sauvegardé : {MODEL_PATH}")
     
     return rf_model, label_encoder, accuracy
 
@@ -115,11 +115,11 @@ if __name__ == '__main__':
     try:
         model, encoder, acc = train_model()
         print("\n" + "="*60)
-        print(f"✅ ENTRAÎNEMENT TERMINÉ AVEC SUCCÈS")
+        print(f"ENTRAÎNEMENT TERMINÉ AVEC SUCCÈS")
         print(f"   Accuracy : {acc*100:.2f}%")
         print(f"   Classes : {len(encoder.classes_)}")
         print("="*60)
     except Exception as e:
-        print(f"\n❌ ERREUR : {e}")
+        print(f"\nERREUR : {e}")
         import traceback
         traceback.print_exc()

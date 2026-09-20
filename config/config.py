@@ -76,23 +76,23 @@ def init_mongo_indexes():
     db.alerts.create_index([('status', 1)])
     db.alerts.create_index([('score_risk', -1)])
     
-    print("✓ Index MongoDB créés avec succès (logs, alerts)")
+    print("Index MongoDB créés avec succès (logs, alerts)")
 
 def init_sql_db(app):
     """Initialise la base SQL pour les users"""
     from models.user import User
     with app.app_context():
         db.create_all()
-        print("✓ Base de données SQL créée avec succès (users)")
+        print("Base de données SQL créée avec succès (users)")
 
 def test_redis_connection():
     """Test la connexion Redis"""
     try:
         redis_client.ping()
-        print("✓ Connexion Redis établie avec succès")
+        print("Connexion Redis établie avec succès")
         return True
     except redis.ConnectionError:
-        print("❌ ERREUR: Redis non disponible. Installez Redis:")
+        print("ERREUR: Redis non disponible. Installez Redis:")
         print("   Windows: https://github.com/microsoftarchive/redis/releases")
         print("   Ou utilisez Docker: docker run -d -p 6379:6379 redis")
         return False

@@ -95,7 +95,7 @@ def revoke_session(session_id):
         # Admin peut révoquer n'importe quelle session
         result = RedisSessionManager.force_delete_session_admin(session_id, current_user.id)
         if result['success']:
-            flash(f"✓ {result['message']}", 'success')
+            flash(f"{result['message']}", 'success')
         else:
             flash(result['message'], 'danger')
     else:

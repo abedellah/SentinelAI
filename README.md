@@ -1,8 +1,8 @@
-# 🛡️ SentinelAI - Système de Détection d'Intrusions avec Architecture Polyglotte
+# SentinelAI - Système de Détection d'Intrusions avec Architecture Polyglotte
 
 **SentinelAI est un IDS polyglotte temps réel avec Machine Learning pour détecter automatiquement 15 types d'attaques réseau en utilisant une architecture hybride SQL + MongoDB + Redis.**
 
-## 📋 Table des matières
+## Table des matières
 
 - [Description](#description)
 - [Fonctionnalités](#fonctionnalités)
@@ -20,7 +20,7 @@
 
 ---
 
-## 📖 Description
+## Description
 
 SentinelAI est un système de détection d'intrusions (IDS) avancé qui combine trois technologies de bases de données pour optimiser performance, sécurité et scalabilité :
 
@@ -36,28 +36,28 @@ DoS Hulk • PortScan • DDoS • BENIGN • DoS GoldenEye • FTP-Patator • 
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
-# 🔍 Détection et Analyse
+# Détection et Analyse
 - Import CSV massif (500+ logs/batch)
 - Classification ML temps réel (<100ms/log)
 - Calcul automatique scores de risque (0-10)
 - Génération alertes automatiques (seuil ≥5)
 
-# 📊 Dashboard SOC
+# Dashboard SOC
 - Visualisation temps réel (Chart.js)
 - Distribution des attaques par type
 - Statut des alertes (open/investigating/closed)
 - Export PDF et JSON
 
-# 🔐 Sécurité
+# Sécurité
 - Authentification bcrypt (12 rounds)
 - Sessions Redis avec TTL 1h
 - Gestion multi-appareils
 - Révocation instantanée sessions
 - Contrôle d'accès basé rôles (admin/analyst)
 
-# 🚀 Performance
+# Performance
 - MongoDB : 11,700 insertions/seconde
 - SQL auth : <10ms
 - Redis cache : <5ms
@@ -65,7 +65,7 @@ DoS Hulk • PortScan • DDoS • BENIGN • DoS GoldenEye • FTP-Patator • 
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────┐
@@ -93,7 +93,7 @@ DoS Hulk • PortScan • DDoS • BENIGN • DoS GoldenEye • FTP-Patator • 
 
 ---
 
-## 📦 Prérequis
+## Prérequis
 
 ### Logiciels requis
 
@@ -122,7 +122,7 @@ redis==5.0.1
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### 1. Cloner le projet
 
@@ -180,7 +180,7 @@ SQLite est une base de données légère intégrée à Python, ne nécessitant a
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### config/config.py
 
@@ -199,7 +199,7 @@ SESSION_TTL = 3600  # 1 heure
 
 ---
 
-## 🎯 Lancement
+## Lancement
 
 ### Initialisation bases de données
 
@@ -210,12 +210,12 @@ python data/demo_data.py
 
 **Sortie attendue** :
 ```
-✓ Collections MongoDB nettoyées (logs, alerts)
-✓ Table SQL nettoyée (users)
-✓ Admin créé : admin / admin123 (ID: 1)
-✓ Analyste créé : analyst / analyst123 (ID: 2)
-✓ 100 logs créés
-✓ 30 alertes créées
+Collections MongoDB nettoyées (logs, alerts)
+Table SQL nettoyée (users)
+Admin créé : admin / admin123 (ID: 1)
+Analyste créé : analyst / analyst123 (ID: 2)
+100 logs créés
+30 alertes créées
 ```
 
 **2. Entraîner modèle ML** :
@@ -225,13 +225,13 @@ python ml/train_model.py
 
 **Sortie attendue** :
 ```
-📂 Chargement du dataset : C:\...\final_dataset.csv
-✓ Dataset chargé : 2830743 lignes
-✓ Données nettoyées : 2830743 lignes
-🌲 Entraînement du RandomForest...
-✓ Modèle entraîné
-📈 Accuracy : 0.9975 (99.75%)
-✅ Modèle sauvegardé : C:\...\model.pkl
+Chargement du dataset : C:\...\final_dataset.csv
+Dataset chargé : 2830743 lignes
+Données nettoyées : 2830743 lignes
+Entraînement du RandomForest...
+Modèle entraîné
+Accuracy : 0.9975 (99.75%)
+Modèle sauvegardé : C:\...\model.pkl
 ```
 
 ### Lancer l'application
@@ -243,7 +243,7 @@ python app.py
 **Sortie attendue** :
 ```
 ============================================================
-🚀 SentinelAI - Système de Détection d'Intrusions
+SentinelAI - Système de Détection d'Intrusions
 ============================================================
  * Running on http://0.0.0.0:5000
 ```
@@ -261,7 +261,7 @@ python app.py
 
 ---
 
-## 🗄️ Scripts d'initialisation des bases
+## Scripts d'initialisation des bases
 
 ### SQL - database/init_users.sql
 
@@ -331,7 +331,7 @@ db.logs.insertMany([
 #!/bin/bash
 # Script de test sessions Redis
 
-echo "🔴 Initialisation sessions Redis de test..."
+echo "Initialisation sessions Redis de test..."
 
 # Session admin
 redis-cli SETEX "sentinelai:session:test-admin-uuid" 3600 '{"user_id":1,"username":"admin","role":"admin","ip_address":"127.0.0.1","login_time":"2025-01-15T10:00:00"}'
@@ -340,12 +340,12 @@ redis-cli SETEX "sentinelai:session:test-admin-uuid" 3600 '{"user_id":1,"usernam
 echo "Sessions créées :"
 redis-cli KEYS "sentinelai:session:*"
 
-echo "✓ Sessions Redis créées avec succès"
+echo "Sessions Redis créées avec succès"
 ```
 
 ---
 
-## 📁 Données de test
+## Données de test
 
 ### CSV Logs - data/test_logs.csv
 
@@ -366,7 +366,7 @@ destination_port,flow_duration,flow_bytes_per_second,flow_packets_per_second,sou
 
 ---
 
-## 📂 Structure du projet
+## Structure du projet
 
 ```
 SentinelAI/
@@ -437,7 +437,7 @@ SentinelAI/
 
 ---
 
-## 🔌 API
+## API
 
 ### Authentification
 
@@ -503,7 +503,7 @@ curl -X POST http://localhost:5000/api/predict \
 
 ---
 
-## 🧪 Tests
+## Tests
 
 
 **1. Test connexion bases** :
@@ -525,7 +525,7 @@ python ml/predict.py
 
 ---
 
-## 🔧 Dépannage
+## Dépannage
 
 ### MongoDB ne démarre pas
 
@@ -541,7 +541,7 @@ net start MongoDB
 
 ### Redis non disponible
 
-**Erreur** : `❌ ERREUR: Redis non disponible`
+**Erreur** : `ERREUR: Redis non disponible`
 
 **Solution** :
 ```bash
@@ -580,9 +580,9 @@ Exemple format correct dans `data/test_logs.csv`
 
 ---
 
-## 👤 Auteur
+## Auteur
 
 **LAGRINI Mohamed Abdellah**
 ---
 
-**🛡️ SentinelAI - Protégez votre réseau avec l'intelligence artificielle**
+**SentinelAI - Protégez votre réseau avec l'intelligence artificielle**

@@ -15,7 +15,7 @@ class MLPredictor:
             raise FileNotFoundError(f"Modèle introuvable : {MODEL_PATH}")
         
         self.model_data = joblib.load(MODEL_PATH)
-        print(f"✓ Modèle chargé : {MODEL_PATH}")
+        print(f"Modèle chargé : {MODEL_PATH}")
     
     def predict(self, features):
         """

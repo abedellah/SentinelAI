@@ -19,7 +19,7 @@ db.init_app(app)
 
 # Test connexion Redis
 if not test_redis_connection():
-    print("⚠️  WARNING: Redis non disponible. Les sessions ne fonctionneront pas.")
+    print("WARNING: Redis non disponible. Les sessions ne fonctionneront pas.")
 
 # Initialisation bases de données
 with app.app_context():
@@ -80,17 +80,17 @@ def index():
 
 if __name__ == '__main__':
     print("="*60)
-    print("🚀 SentinelAI - Système de Détection d'Intrusions")
+    print("SentinelAI - Système de Détection d'Intrusions")
     print("="*60)
-    print(f"📍 URL: http://{Config.HOST}:{Config.PORT}")
-    print(f"🔐 Login: admin / admin123")
+    print(f"URL: http://{Config.HOST}:{Config.PORT}")
+    print(f"Login: admin / admin123")
     print("="*60)
-    print("💾 Architecture Hybride:")
+    print("Architecture Hybride:")
     print(f"   - Users: SQL ({Config.SQLALCHEMY_DATABASE_URI})")
     print(f"   - Logs & Alerts: MongoDB ({Config.MONGO_URI})")
     print(f"   - Sessions: Redis (localhost:6379, TTL: {Config.SESSION_TTL}s)")
     print("="*60)
-    print("🔒 Gestion Sessions:")
+    print("Gestion Sessions:")
     print("   - Users: Accès à LEURS sessions uniquement")
     print("   - Admin: Accès à TOUTES les sessions (supervision)")
     print("="*60)

@@ -9,7 +9,7 @@ from config.config import Config
 
 def generate_demo_data():
     """Génère des données de démonstration"""
-    print("🔧 Génération des données de démonstration...")
+    print("Génération des données de démonstration...")
     
     # Initialisation Flask pour SQLAlchemy
     app = Flask(__name__)
@@ -21,29 +21,29 @@ def generate_demo_data():
         db.create_all()
         
         # Nettoyage des bases
-        print("🗑️  Nettoyage des bases de données...")
+        print("Nettoyage des bases de données...")
         
         # Nettoyage MongoDB (logs, alerts)
         mongo_db = get_mongo_db()
         mongo_db.logs.delete_many({})
         mongo_db.alerts.delete_many({})
-        print("✓ Collections MongoDB nettoyées (logs, alerts)")
+        print("Collections MongoDB nettoyées (logs, alerts)")
         
         # Nettoyage SQL (users)
         User.query.delete()
         db.session.commit()
-        print("✓ Table SQL nettoyée (users)")
+        print("Table SQL nettoyée (users)")
         
         # 1. Créer utilisateurs dans SQL
-        print("\n👥 Création des utilisateurs (SQL)...")
+        print("\nCréation des utilisateurs (SQL)...")
         admin_id = User.create('admin', 'admin', 'admin')
-        print(f"✓ Admin créé : admin / admin (ID: {admin_id})")
+        print(f"Admin créé : admin / admin (ID: {admin_id})")
         
         analyst_id = User.create('abdellah', 'abdellah', 'analyst')
-        print(f"✓ Analyste créé : abdellah / abdellah (ID: {analyst_id})")
+        print(f"Analyste créé : abdellah / abdellah (ID: {analyst_id})")
         
         # 2. Générer des logs dans MongoDB
-        print("\n📊 Génération des logs (MongoDB)...")
+        print("\nGénération des logs (MongoDB)...")
         attack_types = [
             'BENIGN', 'DoS Hulk', 'PortScan', 'DDoS', 'DoS GoldenEye',
             'FTP-Patator', 'Bot', 'DoS slowloris', 'SSH-Patator',
@@ -79,10 +79,10 @@ def generate_demo_data():
             log_id = Log.create(log_data)
             log_ids.append(log_id)
         
-        print(f"✓ {len(log_ids)} logs créés")
+        print(f"{len(log_ids)} logs créés")
         
         # 3. Générer des alertes dans MongoDB (avec user_id SQL)
-        print("\n🚨 Génération des alertes (MongoDB avec référence SQL)...")
+        print("\nGénération des alertes (MongoDB avec référence SQL)...")
         alert_count = 0
         for log_id in log_ids:
             log = Log.find_by_id(log_id)
@@ -118,16 +118,16 @@ def generate_demo_data():
                 Alert.create(alert_data)
                 alert_count += 1
         
-        print(f"✓ {alert_count} alertes créées")
+        print(f"{alert_count} alertes créées")
         
         print("\n" + "="*60)
-        print("✅ DONNÉES DE DÉMONSTRATION GÉNÉRÉES AVEC SUCCÈS")
+        print("DONNÉES DE DÉMONSTRATION GÉNÉRÉES AVEC SUCCÈS")
         print("="*60)
         print(f"   Users (SQL): 2 (admin, analyst)")
         print(f"   Logs (MongoDB): {len(log_ids)}")
         print(f"   Alerts (MongoDB): {alert_count}")
         print("="*60)
-        print("\n💾 Architecture hybride:")
+        print("\nArchitecture hybride:")
         print(f"   - Users: SQLite ({Config.SQLALCHEMY_DATABASE_URI})")
         print(f"   - Logs & Alerts: MongoDB ({Config.MONGO_URI})")
         print("="*60)
@@ -136,6 +136,6 @@ if __name__ == '__main__':
     try:
         generate_demo_data()
     except Exception as e:
-        print(f"\n❌ ERREUR : {e}")
+        print(f"\nERREUR : {e}")
         import traceback
         traceback.print_exc()

@@ -156,12 +156,12 @@
         <div class="modal-content">
             <form method="POST" action="{{ url_for('logs.import_csv') }}" enctype="multipart/form-data">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">📥 Import CSV - Logs multiples</h5>
+                    <h5 class="modal-title">Import CSV - Logs multiples</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <strong>📋 Format CSV requis :</strong><br>
+                        <strong>Format CSV requis :</strong><br>
                         <code>destination_port, flow_duration, flow_bytes_per_second, flow_packets_per_second</code><br><br>
                         <strong>Colonnes optionnelles :</strong><br>
                         <code>source_ip, destination_ip, source_port, protocol, event_type, Label</code>
@@ -173,7 +173,7 @@
                     </div>
                     
                     <div class="alert alert-warning">
-                        <strong>⚠️ Important :</strong>
+                        <strong>Important :</strong>
                         <ul class="mb-0">
                             <li>Le fichier sera analysé par le pipeline IDS complet</li>
                             <li>Le modèle ML prédira le label de chaque log</li>
@@ -184,7 +184,7 @@
                     
                     <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">💡 Exemple de CSV valide :</h6>
+                            <h6 class="card-title">Exemple de CSV valide :</h6>
                             <pre class="bg-light p-2 mb-0"><code>destination_port,flow_duration,flow_bytes_per_second,flow_packets_per_second,source_ip,destination_ip,Label
 80,5000,15000.5,150.2,192.168.1.100,10.0.0.50,DDoS
 443,3000,8000.3,80.5,192.168.1.101,10.0.0.51,BENIGN

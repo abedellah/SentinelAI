@@ -60,7 +60,7 @@ class IDSPipeline:
         except Exception as e:
             predicted_label = normalized['Label']
             confidence = 0.0
-            print(f"⚠️ Erreur ML : {e}")
+            print(f"Erreur ML : {e}")
         
         # 4. Calcul du score de risque
         risk_score = RiskScorer.calculate_risk(predicted_label, confidence, normalized)

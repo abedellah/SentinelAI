@@ -53,7 +53,7 @@ class RedisSessionManager:
         redis_client.sadd(user_sessions_key, session_id)
         redis_client.expire(user_sessions_key, Config.SESSION_TTL)
         
-        print(f"✓ Session créée: {session_id} pour user {username} (TTL: {Config.SESSION_TTL}s)")
+        print(f"Session créée: {session_id} pour user {username} (TTL: {Config.SESSION_TTL}s)")
         
         return session_id
     
@@ -145,7 +145,7 @@ class RedisSessionManager:
                 user_sessions_key = f"sentinelai:user:{user_id}:sessions"
                 redis_client.srem(user_sessions_key, session_id)
             
-            print(f"✓ Session supprimée: {session_id}")
+            print(f"Session supprimée: {session_id}")
             return True
         
         return False
