@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="SentinelAI, détection d'intrusions temps réel" width="100%">
+</p>
+
 # SentinelAI - Système de Détection d'Intrusions avec Architecture Polyglotte
 
 **SentinelAI est un IDS polyglotte temps réel avec Machine Learning pour détecter automatiquement 15 types d'attaques réseau en utilisant une architecture hybride SQL + MongoDB + Redis.**
