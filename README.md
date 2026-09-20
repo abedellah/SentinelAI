@@ -580,11 +580,9 @@ Exemple format correct dans `data/test_logs.csv`
 
 ---
 
-## 👤 Auteurs
+## 👤 Auteur
 
-**LAGRINI Mohamed Abdellah **
--
-**MOUTAOUKIL Fatima Zahrae**
+**LAGRINI Mohamed Abdellah**
 ---
 
 **🛡️ SentinelAI - Protégez votre réseau avec l'intelligence artificielle**
