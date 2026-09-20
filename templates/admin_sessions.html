@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Administration Sessions - SentinelAI{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold mb-2" style="color: var(--dark);">
+        <i class="bi bi-shield-lock me-3"></i>Administration des Sessions
+    </h2>
+    <p class="text-muted">Supervision et gestion de toutes les sessions utilisateurs actives</p>
+</div>
+
+<!-- Statistiques Globales -->
+<div class="row mb-4 g-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">
+                    <i class="bi bi-collection me-2"></i>Total Sessions
+                </h6>
+                <h2>{{ statistics.total_sessions }}</h2>
+                <small class="text-white-50">Sessions actives</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">
+                    <i class="bi bi-people me-2"></i>Utilisateurs Connectés
+                </h6>
+                <h2>{{ statistics.total_users }}</h2>
+                <small class="text-white-50">Users actifs</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">
+                    <i class="bi bi-shield-check me-2"></i>Admins
+                </h6>
+                <h2>{{ statistics.sessions_by_role.get('admin', 0) }}</h2>
+                <small class="text-white-50">Sessions admin</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">
+                    <i class="bi bi-graph-up me-2"></i>Moyenne
+                </h6>
+                <h2>{{ statistics.avg_sessions_per_user }}</h2>
+                <small class="text-white-50">Sessions/user</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sessions par Utilisateur -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-4">
+            <i class="bi bi-people-fill me-2" style="color: var(--primary);"></i>
+            Sessions par Utilisateur
+        </h5>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-person me-2"></i>Utilisateur</th>
+                        <th><i class="bi bi-shield me-2"></i>Rôle</th>
+                        <th><i class="bi bi-collection me-2"></i>Sessions Actives</th>
+                        <th><i class="bi bi-hdd-network me-2"></i>Dernière IP</th>
+                        <th><i class="bi bi-activity me-2"></i>Dernière Activité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_id, sessions in sessions_by_user.items() %}
+                    {% set first_session = sessions[0] %}
+                    <tr>
+                        <td>
+                            <strong>{{ first_session.username }}</strong>
+                            {% if first_session.username == current_user.username %}
+                            <span class="badge bg-info ms-2">
+                                <i class="bi bi-star-fill me-1"></i>Vous
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if first_session.role == 'admin' %}danger{% else %}primary{% endif %}">
+                                {% if first_session.role == 'admin' %}
+                                <i class="bi bi-shield-fill-check me-1"></i>
+                                {% else %}
+                                <i class="bi bi-person-badge me-1"></i>
+                                {% endif %}
+                                {{ first_session.role }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-collection me-1"></i>
+                                {{ sessions|length }} session(s)
+                            </span>
+                        </td>
+                        <td><code>{{ first_session.ip_address }}</code></td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ first_session.last_activity[:19].replace('T', ' ') }}
+                            </small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Toutes les Sessions -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-4">
+            <i class="bi bi-list-ul me-2" style="color: var(--danger);"></i>
+            Toutes les Sessions Actives ({{ all_sessions|length }})
+        </h5>
+        
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-key me-2"></i>Session ID</th>
+                        <th><i class="bi bi-person me-2"></i>Utilisateur</th>
+                        <th><i class="bi bi-shield me-2"></i>Rôle</th>
+                        <th><i class="bi bi-hdd-network me-2"></i>IP</th>
+                        <th><i class="bi bi-clock me-2"></i>Connexion</th>
+                        <th><i class="bi bi-activity me-2"></i>Dernière Activité</th>
+                        <th><i class="bi bi-hourglass me-2"></i>TTL</th>
+                        <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sess in all_sessions %}
+                    <tr class="{% if sess.session_id == current_session_id %}table-success{% endif %}">
+                        <td>
+                            <code class="small">{{ sess.session_id[:12] }}...</code>
+                            {% if sess.session_id == current_session_id %}
+                            <span class="badge bg-success ms-1">
+                                <i class="bi bi-check-circle"></i>
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ sess.username }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if sess.role == 'admin' %}danger{% else %}secondary{% endif %}">
+                                {{ sess.role }}
+                            </span>
+                        </td>
+                        <td><code class="small">{{ sess.ip_address }}</code></td>
+                        <td>
+                            <small class="text-muted">
+                                {{ sess.login_time[:16].replace('T', ' ') }}
+                            </small>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {{ sess.last_activity[:16].replace('T', ' ') }}
+                            </small>
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if sess.ttl_seconds > 1800 %}success{% elif sess.ttl_seconds > 600 %}warning{% else %}danger{% endif %}">
+                                {{ (sess.ttl_seconds // 60)|int }}min
+                            </span>
+                        </td>
+                        <td>
+                            {% if sess.session_id != current_session_id %}
+                            <form method="POST" action="{{ url_for('auth.revoke_session', session_id=sess.session_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Révoquer la session de {{ sess.username }} ?')">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-success small">
+                                <i class="bi bi-shield-check"></i> Actuelle
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Informations Admin -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-shield-fill-exclamation me-2" style="color: var(--danger);"></i>
+                    Privilèges Administrateur
+                </h6>
+                <ul class="mb-0">
+                    <li><strong>Vue globale</strong> : Toutes les sessions système</li>
+                    <li><strong>Révocation</strong> : Pouvoir de terminer n'importe quelle session</li>
+                    <li><strong>Monitoring</strong> : Statistiques en temps réel</li>
+                    <li><strong>Audit</strong> : Traçabilité des connexions (IP, timestamps)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-exclamation-triangle me-2" style="color: var(--warning);"></i>
+                    Responsabilités
+                </h6>
+                <ul class="mb-0">
+                    <li>Surveiller les sessions suspectes (multiples IPs)</li>
+                    <li>Révoquer les sessions inactives prolongées</li>
+                    <li>Détecter les tentatives d'accès non autorisés</li>
+                    <li>Respecter la vie privée des utilisateurs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle me-2"></i>
+    <strong>Note :</strong> En tant qu'administrateur, vous avez accès à toutes les sessions pour des raisons de sécurité et de maintenance. 
+    Les utilisateurs normaux ne peuvent voir et gérer que leurs propres sessions.
+</div>
+{% endblock %}

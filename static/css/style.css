@@ -1,0 +1,50 @@
+/* static/css/style.css */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-body h2 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.6em;
+}
+
+canvas {
+    max-height: 300px;
+}
+
+.alert {
+    border-radius: 0.25rem;
+}
+
+.pagination {
+    margin-top: 1rem;
+}
+
+.modal-header {
+    background-color: #343a40;
+    color: white;
+}
+
+.btn {
+    border-radius: 0.25rem;
+}

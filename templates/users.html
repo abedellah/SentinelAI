@@ -1,0 +1,126 @@
+<!-- templates/users.html -->
+{% extends "base.html" %}
+
+{% block title %}Utilisateurs - SentinelAI{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-2" style="color: var(--dark);">
+            <i class="bi bi-people me-3"></i>Gestion des Utilisateurs
+        </h2>
+        <p class="text-muted mb-0">Administrez les accès au système</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+        <i class="bi bi-person-plus me-2"></i>Nouvel Utilisateur
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-person me-2"></i>Nom d'utilisateur</th>
+                        <th><i class="bi bi-shield me-2"></i>Rôle</th>
+                        <th><i class="bi bi-clock-history me-2"></i>Dernière connexion</th>
+                        <th><i class="bi bi-calendar-plus me-2"></i>Créé le</th>
+                        <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <strong>{{ user.username }}</strong>
+                            {% if user.username == current_user.username %}
+                            <span class="badge bg-info ms-2">
+                                <i class="bi bi-star-fill me-1"></i>Vous
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if user.role == 'admin' %}danger{% else %}primary{% endif %}">
+                                {% if user.role == 'admin' %}
+                                <i class="bi bi-shield-fill-check me-1"></i>
+                                {% else %}
+                                <i class="bi bi-person-badge me-1"></i>
+                                {% endif %}
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.last_login %}
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
+                            </small>
+                            {% else %}
+                            <span class="text-muted">
+                                <i class="bi bi-dash-circle me-1"></i>Jamais
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-check me-1"></i>
+                                {{ user.created_at.strftime('%Y-%m-%d') }}
+                            </small>
+                        </td>
+                        <td>
+                            {% if user.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('users.delete_user', user_id=user.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet utilisateur?')">
+                                    <i class="bi bi-trash me-1"></i>Supprimer
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">
+                                <i class="bi bi-lock-fill me-1"></i>Protégé
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Création Utilisateur -->
+<div class="modal fade" id="createUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('users.create_user') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nouvel Utilisateur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom d'utilisateur</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rôle</label>
+                        <select class="form-select" name="role" required>
+                            <option value="analyst">Analyste</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

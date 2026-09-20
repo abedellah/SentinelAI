@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Sessions - SentinelAI{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold mb-2" style="color: var(--dark);">
+        <i class="bi bi-collection me-3"></i>Mes Sessions Actives
+    </h2>
+    <p class="text-muted">Gérez vos connexions actives depuis différents appareils</p>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-info d-flex align-items-center">
+            <i class="bi bi-info-circle me-3" style="font-size: 1.5rem;"></i>
+            <div>
+                <strong>Sécurité :</strong> Vous voyez uniquement vos propres sessions. 
+                Si vous identifiez une session inconnue, révoquez-la immédiatement.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-activity me-2" style="color: var(--primary);"></i>
+                Mes Connexions Actives ({{ sessions|length }})
+            </h5>
+            <div>
+                {% if sessions|length > 1 %}
+                <form method="POST" action="{{ url_for('auth.revoke_all_sessions') }}" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-warning me-2" onclick="return confirm('Révoquer toutes les autres sessions ?')">
+                        <i class="bi bi-x-circle me-2"></i>Révoquer les autres
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Retour
+                </a>
+            </div>
+        </div>
+        
+        {% if sessions %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-key me-2"></i>Session ID</th>
+                        <th><i class="bi bi-hdd-network me-2"></i>Adresse IP</th>
+                        <th><i class="bi bi-clock-history me-2"></i>Connexion</th>
+                        <th><i class="bi bi-activity me-2"></i>Dernière activité</th>
+                        <th><i class="bi bi-hourglass-split me-2"></i>Expiration</th>
+                        <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sess in sessions %}
+                    <tr class="{% if sess.session_id == current_session_id %}table-success{% endif %}">
+                        <td>
+                            <code>{{ sess.session_id[:16] }}...</code>
+                            {% if sess.session_id == current_session_id %}
+                            <span class="badge bg-success ms-2">
+                                <i class="bi bi-check-circle me-1"></i>Session Actuelle
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <code>{{ sess.ip_address }}</code>
+                            {% if sess.ip_address == request.remote_addr %}
+                            <span class="badge bg-info ms-1">
+                                <i class="bi bi-geo-alt-fill me-1"></i>Cet appareil
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ sess.login_time[:19].replace('T', ' ') }}
+                            </small>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ sess.last_activity[:19].replace('T', ' ') }}
+                            </small>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning">
+                                <i class="bi bi-hourglass-split me-1"></i>
+                                ~1h
+                            </span>
+                        </td>
+                        <td>
+                            {% if sess.session_id != current_session_id %}
+                            <form method="POST" action="{{ url_for('auth.revoke_session', session_id=sess.session_id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Révoquer cette session ?')">
+                                    <i class="bi bi-x-circle me-1"></i>Révoquer
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-success fw-bold">
+                                <i class="bi bi-shield-check me-1"></i>En cours
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="alert alert-warning mt-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>Important :</strong> Les sessions expirent automatiquement après 1 heure d'inactivité. 
+            Chaque action dans l'application renouvelle automatiquement le délai d'expiration.
+        </div>
+        {% else %}
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            Aucune session active détectée. Veuillez vous reconnecter.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-shield-check me-2" style="color: var(--success);"></i>
+                    Sécurité des Sessions
+                </h6>
+                <ul class="mb-0">
+                    <li>Sessions isolées par utilisateur</li>
+                    <li>Stockage sécurisé dans Redis</li>
+                    <li>Expiration automatique (TTL 1h)</li>
+                    <li>Renouvellement à chaque activité</li>
+                    <li>Révocation manuelle disponible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-exclamation-triangle me-2" style="color: var(--warning);"></i>
+                    Bonnes Pratiques
+                </h6>
+                <ul class="mb-0">
+                    <li>Déconnectez-vous après chaque utilisation</li>
+                    <li>Révoquez immédiatement les sessions inconnues</li>
+                    <li>Ne partagez jamais vos identifiants</li>
+                    <li>Vérifiez régulièrement vos sessions actives</li>
+                    <li>Utilisez des mots de passe forts et uniques</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

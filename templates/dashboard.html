@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SentinelAI{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold" style="color: var(--dark);">
+        <i class="bi bi-speedometer2 me-3"></i>Dashboard SOC
+    </h2>
+    <p class="text-muted">Vue d'ensemble de votre système de détection d'intrusions</p>
+</div>
+
+<div class="row mb-4 g-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">
+                            <i class="bi bi-file-text me-2"></i>Total Logs
+                        </h6>
+                        <h2>{{ stats.total_logs }}</h2>
+                        <p class="mb-0 small text-white-50">
+                            <i class="bi bi-arrow-up me-1"></i>Événements capturés
+                        </p>
+                    </div>
+                    <div class="opacity-50">
+                        <i class="bi bi-database" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">
+                            <i class="bi bi-bell me-2"></i>Total Alertes
+                        </h6>
+                        <h2>{{ stats.total_alerts }}</h2>
+                        <p class="mb-0 small text-white-50">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Menaces détectées
+                        </p>
+                    </div>
+                    <div class="opacity-50">
+                        <i class="bi bi-shield-exclamation" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">
+                            <i class="bi bi-exclamation-circle me-2"></i>Alertes Ouvertes
+                        </h6>
+                        <h2>{{ stats.open_alerts }}</h2>
+                        <p class="mb-0 small text-white-50">
+                            <i class="bi bi-clock me-1"></i>Nécessitent action
+                        </p>
+                    </div>
+                    <div class="opacity-50">
+                        <i class="bi bi-circle-fill" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-dark h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">
+                            <i class="bi bi-people me-2"></i>Sessions Actives
+                        </h6>
+                        <h2>{{ stats.active_sessions }}</h2>
+                        <p class="mb-0 small text-white-50">
+                            <i class="bi bi-person-check me-1"></i>{{ stats.users_online }} utilisateurs
+                        </p>
+                    </div>
+                    <div class="opacity-50">
+                        <i class="bi bi-clock-history" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4 g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-bar-chart-fill me-2" style="color: var(--primary);"></i>
+                    Distribution des Attaques
+                </h5>
+                <p class="text-muted small mb-4">Classification par type de menace détectée</p>
+                <canvas id="attackChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-pie-chart-fill me-2" style="color: var(--secondary);"></i>
+                    Statut des Alertes
+                </h5>
+                <p class="text-muted small mb-4">Répartition par état de traitement</p>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-clock-history me-2" style="color: var(--info);"></i>
+                    Derniers Logs
+                </h5>
+                <p class="text-muted small mb-3">Événements récents capturés</p>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-hdd-network me-2"></i>Source IP</th>
+                                <th><i class="bi bi-tag me-2"></i>Label</th>
+                                <th><i class="bi bi-calendar3 me-2"></i>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in recent_logs[:5] %}
+                            <tr>
+                                <td><code>{{ log.source_ip }}</code></td>
+                                <td>
+                                    <span class="badge bg-{% if log.Label == 'BENIGN' %}success{% else %}danger{% endif %}">
+                                        {% if log.Label == 'BENIGN' %}
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        {% else %}
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        {% endif %}
+                                        {{ log.Label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('logs.list_logs') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right me-2"></i>Voir tous les logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-shield-fill-exclamation me-2" style="color: var(--danger);"></i>
+                    Dernières Alertes
+                </h5>
+                <p class="text-muted small mb-3">Menaces récemment identifiées</p>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-bug me-2"></i>Type</th>
+                                <th><i class="bi bi-speedometer me-2"></i>Score</th>
+                                <th><i class="bi bi-info-circle me-2"></i>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alert in recent_alerts[:5] %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ alert.alert_type }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong class="{% if alert.score_risk >= 7 %}text-danger{% elif alert.score_risk >= 5 %}text-warning{% else %}text-info{% endif %}">
+                                        <i class="bi bi-gauge me-1"></i>{{ alert.score_risk }}/10
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if alert.status == 'open' %}danger{% elif alert.status == 'investigating' %}warning{% else %}success{% endif %}">
+                                        {% if alert.status == 'open' %}
+                                        <i class="bi bi-circle-fill me-1"></i>
+                                        {% elif alert.status == 'investigating' %}
+                                        <i class="bi bi-hourglass-split me-1"></i>
+                                        {% else %}
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        {% endif %}
+                                        {{ alert.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('alerts.list_alerts') }}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-arrow-right me-2"></i>Voir toutes les alertes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

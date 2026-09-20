@@ -1,0 +1,11 @@
+flask>=3.1
+flask-login>=0.6
+flask-sqlalchemy>=3.1
+bcrypt>=5.0
+pymongo>=4.15
+redis>=5.0
+scikit-learn>=1.8
+pandas>=2.3
+numpy>=2.3
+joblib>=1.5
+fpdf>=1.7

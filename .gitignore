@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+*.db
+*.pkl
+uploads/
+.env
+.idea/
+.vscode/

@@ -1,0 +1,206 @@
+<!-- templates/logs.html -->
+{% extends "base.html" %}
+
+{% block title %}Logs - SentinelAI{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-2" style="color: var(--dark);">
+            <i class="bi bi-file-text me-3"></i>Gestion des Logs
+        </h2>
+        <p class="text-muted mb-0">Visualisez et analysez tous les événements capturés</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('logs.export_json') }}" class="btn btn-info">
+            <i class="bi bi-filetype-json me-2"></i>Export JSON
+        </a>
+        <a href="{{ url_for('logs.export_pdf') }}" class="btn btn-secondary">
+            <i class="bi bi-file-pdf me-2"></i>Export PDF
+        </a>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importCsvModal">
+            <i class="bi bi-cloud-upload me-2"></i>Import CSV
+        </button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createLogModal">
+            <i class="bi bi-plus-circle me-2"></i>Nouveau Log
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-calendar3 me-2"></i>Timestamp</th>
+                        <th><i class="bi bi-hdd-network me-2"></i>Source IP</th>
+                        <th><i class="bi bi-hdd-network me-2"></i>Dest IP</th>
+                        <th><i class="bi bi-router me-2"></i>Port</th>
+                        <th><i class="bi bi-tag me-2"></i>Label</th>
+                        <th><i class="bi bi-info-circle me-2"></i>Statut</th>
+                        <th><i class="bi bi-gear me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </small>
+                        </td>
+                        <td><code>{{ log.source_ip }}</code></td>
+                        <td><code>{{ log.destination_ip }}</code></td>
+                        <td><span class="badge bg-secondary">{{ log.destination_port }}</span></td>
+                        <td>
+                            <span class="badge bg-{% if log.Label == 'BENIGN' %}success{% else %}danger{% endif %}">
+                                {% if log.Label == 'BENIGN' %}
+                                <i class="bi bi-check-circle me-1"></i>
+                                {% else %}
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                {% endif %}
+                                {{ log.Label }}
+                            </span>
+                        </td>
+                        <td><span class="badge bg-info">{{ log.status }}</span></td>
+                        <td>
+                            <form method="POST" action="{{ url_for('logs.delete_log', log_id=log._id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce log?')">
+                                    <i class="bi bi-trash me-1"></i>Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <nav>
+            <ul class="pagination">
+                {% if page > 1 %}
+                <li class="page-item"><a class="page-link" href="?page={{ page-1 }}">Précédent</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link" href="#">{{ page }}</a></li>
+                {% if logs|length == per_page %}
+                <li class="page-item"><a class="page-link" href="?page={{ page+1 }}">Suivant</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Modal Création Log -->
+<div class="modal fade" id="createLogModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('logs.create_log') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nouveau Log</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Source IP</label>
+                        <input type="text" class="form-control" name="source_ip" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Destination IP</label>
+                        <input type="text" class="form-control" name="destination_ip" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Source Port</label>
+                            <input type="number" class="form-control" name="source_port" value="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Destination Port</label>
+                            <input type="number" class="form-control" name="destination_port" value="80">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Protocole</label>
+                        <select class="form-select" name="protocol">
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                            <option value="ICMP">ICMP</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Flow Duration (ms)</label>
+                        <input type="number" class="form-control" name="flow_duration" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Flow Bytes/s</label>
+                        <input type="number" step="0.01" class="form-control" name="flow_bytes_per_second" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Flow Packets/s</label>
+                        <input type="number" step="0.01" class="form-control" name="flow_packets_per_second" value="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import CSV -->
+<div class="modal fade" id="importCsvModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('logs.import_csv') }}" enctype="multipart/form-data">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">📥 Import CSV - Logs multiples</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>📋 Format CSV requis :</strong><br>
+                        <code>destination_port, flow_duration, flow_bytes_per_second, flow_packets_per_second</code><br><br>
+                        <strong>Colonnes optionnelles :</strong><br>
+                        <code>source_ip, destination_ip, source_port, protocol, event_type, Label</code>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Sélectionnez votre fichier CSV</strong></label>
+                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Important :</strong>
+                        <ul class="mb-0">
+                            <li>Le fichier sera analysé par le pipeline IDS complet</li>
+                            <li>Le modèle ML prédira le label de chaque log</li>
+                            <li>Des alertes seront créées automatiquement si risque élevé</li>
+                            <li>L'import peut prendre quelques secondes selon la taille</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">💡 Exemple de CSV valide :</h6>
+                            <pre class="bg-light p-2 mb-0"><code>destination_port,flow_duration,flow_bytes_per_second,flow_packets_per_second,source_ip,destination_ip,Label
+80,5000,15000.5,150.2,192.168.1.100,10.0.0.50,DDoS
+443,3000,8000.3,80.5,192.168.1.101,10.0.0.51,BENIGN
+22,10000,50000.8,500.1,192.168.1.102,10.0.0.52,SSH-Patator</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-upload"></i> Importer les logs
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
