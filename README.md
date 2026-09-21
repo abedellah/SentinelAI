@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="SentinelAI, détection d'intrusions temps réel" width="100%">
+  <img src="assets/banner.svg?v=2" alt="SentinelAI, détection d'intrusions temps réel" width="100%">
 </p>
 
 # SentinelAI - Système de Détection d'Intrusions avec Architecture Polyglotte
