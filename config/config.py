@@ -25,7 +25,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(32)  # set SECRET_KEY in production
     
     # MongoDB Configuration (pour logs et alerts)
-    MONGO_URI = 'mongodb://localhost:27017/'
+    MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/')
     MONGO_DB = 'sentinelai_db'
     
     # Collections MongoDB
@@ -56,9 +56,10 @@ class Config:
     DATASET_PATH = os.environ.get('SENTINELAI_DATASET', str(BASE_DIR / 'data' / 'final_dataset.csv'))
     
     # Flask
-    DEBUG = True
-    HOST = '0.0.0.0'
-    PORT = 5000
+    # Sécurisé par défaut : pas de débogueur Werkzeug, écoute sur la machine locale uniquement.
+    DEBUG = os.environ.get('FLASK_DEBUG', '0') == '1'
+    HOST = os.environ.get('HOST', '127.0.0.1')
+    PORT = int(os.environ.get('PORT', 5000))
 
 # MongoDB Connection (pour logs et alerts uniquement)
 def get_mongo_db():
@@ -100,5 +101,5 @@ def test_redis_connection():
     except redis.ConnectionError:
         print("ERREUR: Redis non disponible. Installez Redis:")
         print("   Windows: https://github.com/microsoftarchive/redis/releases")
-        print("   Ou utilisez Docker: docker run -d -p 6379:6379 redis")
+        print("   Ou utilisez Docker: docker compose up -d   (voir docker-compose.yml)")
         return False

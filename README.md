@@ -187,6 +187,24 @@ SQLite est une base de données légère intégrée à Python, ne nécessitant a
 
 ## Configuration
 
+### Variables d'environnement
+
+Par défaut l'application est **sécurisée** : pas de débogueur Flask, écoute sur `127.0.0.1` uniquement.
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `SECRET_KEY` | générée à chaque démarrage | clé de signature des sessions |
+| `FLASK_DEBUG` | `0` | `1` active le débogueur (développement uniquement) |
+| `HOST` / `PORT` | `127.0.0.1` / `5000` | adresse d'écoute |
+| `REDIS_HOST` / `REDIS_PORT` | `localhost` / `6379` | Redis des sessions |
+| `MONGO_URI` | `mongodb://localhost:27017/` | MongoDB des logs et alertes |
+| `SENTINELAI_DATASET` | `data/final_dataset.csv` | jeu de données pour réentraîner le modèle |
+
+Redis et MongoDB se lancent avec `docker compose up -d` (voir `docker-compose.yml`). Si un port est déjà pris :
+`REDIS_PORT=6380 MONGO_PORT=27018 docker compose up -d`, puis `REDIS_PORT=6380 MONGO_URI=mongodb://localhost:27018/`
+au démarrage de l'application.
+
+
 ### config/config.py
 
 **Modifier la connexion SQL** (optionnel) :
@@ -250,7 +268,7 @@ python app.py
 ============================================================
 SentinelAI - Système de Détection d'Intrusions
 ============================================================
- * Running on http://0.0.0.0:5000
+ * Running on http://127.0.0.1:5000
 ```
 
 ### Accéder à l'application

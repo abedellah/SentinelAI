@@ -1,0 +1,15 @@
+# Redis (sessions) et MongoDB (logs, alertes) pour SentinelAI.
+# Les ports de l'hôte sont réglables si 6379 ou 27017 sont déjà pris (par exemple par un Redis Windows ancien) :
+#   REDIS_PORT=6380 MONGO_PORT=27018 docker compose up -d
+# puis démarrer l'application avec REDIS_PORT=6380 MONGO_URI=mongodb://localhost:27018/
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    restart: unless-stopped
+  mongo:
+    image: mongo:7
+    ports:
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+    restart: unless-stopped
