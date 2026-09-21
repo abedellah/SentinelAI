@@ -185,6 +185,12 @@ SQLite est une base de données légère intégrée à Python, ne nécessitant a
 
 ---
 
+## Modèle
+
+`ml/model.pkl` (RandomForest entraîné sur CICIDS2017, 15 classes) est fourni dans le dépôt, compressé (environ 15 Mo), pour que
+l'application démarre sans télécharger le jeu de données. `python ml/train_model.py` le régénère à partir du CSV
+(variable `SENTINELAI_DATASET`).
+
 ## Configuration
 
 ### Variables d'environnement

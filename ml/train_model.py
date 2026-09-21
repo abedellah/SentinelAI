@@ -107,7 +107,7 @@ def train_model():
     }
     
     os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
-    joblib.dump(model_data, MODEL_PATH)
+    joblib.dump(model_data, MODEL_PATH, compress=('zlib', 9))  # 127 Mo bruts, environ 15 Mo compressés : sous la limite de GitHub
     print(f"\nModèle sauvegardé : {MODEL_PATH}")
     
     return rf_model, label_encoder, accuracy

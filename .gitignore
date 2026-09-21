@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.db
 *.pkl
+!ml/model.pkl
 uploads/
 .env
 .idea/

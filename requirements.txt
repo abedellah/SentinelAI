@@ -4,7 +4,7 @@ flask-sqlalchemy>=3.1
 bcrypt>=5.0
 pymongo>=4.15
 redis>=5.0
-scikit-learn>=1.8
+scikit-learn==1.8.0  # version avec laquelle ml/model.pkl a été enregistré
 pandas>=2.3
 numpy>=2.3
 joblib>=1.5
