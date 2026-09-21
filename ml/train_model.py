@@ -8,8 +8,9 @@ import joblib
 import os
 
 # Chemins
-DATASET_PATH = r'C:\Users\oussa\Desktop\MachineLearningCSV\final_dataset.csv'
-MODEL_PATH = r'C:\Users\oussa\Desktop\SentinelAI\ml\model.pkl'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATASET_PATH = os.environ.get('SENTINELAI_DATASET', os.path.join(BASE_DIR, 'data', 'final_dataset.csv'))
+MODEL_PATH = os.path.join(BASE_DIR, 'ml', 'model.pkl')
 
 # Labels attendus (15 classes)
 EXPECTED_LABELS = [

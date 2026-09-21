@@ -56,12 +56,12 @@ if ($mongoService) {
 
 # Génération des données de démo
 Write-Host "`n[6/7] Génération des données de démonstration..." -ForegroundColor Yellow
-python data\demo_data.py
+python -m data.demo_data
 Write-Host "  Données de démo générées" -ForegroundColor Green
 
 # Vérification du dataset ML
 Write-Host "`n[7/7] Vérification du dataset ML..." -ForegroundColor Yellow
-$datasetPath = "C:\Users\oussa\Desktop\MachineLearningCSV\final_dataset.csv"
+$datasetPath = if ($env:SENTINELAI_DATASET) { $env:SENTINELAI_DATASET } else { Join-Path $PSScriptRoot "data\final_dataset.csv" }
 if (Test-Path $datasetPath) {
     Write-Host "  Dataset trouvé: $datasetPath" -ForegroundColor Green
     Write-Host "`n  Entraînement du modèle ML..." -ForegroundColor Yellow
@@ -86,6 +86,6 @@ Write-Host ""
 Write-Host "Commandes utiles:" -ForegroundColor Yellow
 Write-Host "  Activer venv    : .\venv\Scripts\Activate.ps1" -ForegroundColor White
 Write-Host "  Lancer app      : python app.py" -ForegroundColor White
-Write-Host "  Réinitialiser DB: python data\demo_data.py" -ForegroundColor White
+Write-Host "  Réinitialiser DB: python -m data.demo_data" -ForegroundColor White
 Write-Host "  Réentraîner ML  : python ml\train_model.py" -ForegroundColor White
 Write-Host ""

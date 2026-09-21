@@ -170,6 +170,7 @@ mongo --eval "db.adminCommand('listDatabases')"
 **Windows (Docker recommandé)** :
 ```powershell
 docker run -d -p 6379:6379 --name redis-sentinel redis:latest
+# si le port 6379 est déjà pris : -p 6380:6379, puis définir REDIS_PORT=6380
 ```
 
 **Vérifier** :
@@ -191,8 +192,8 @@ SQLite est une base de données légère intégrée à Python, ne nécessitant a
 **Modifier la connexion SQL** (optionnel) :
 
 ```python
-# Par défaut : SQLite
-SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Users/oussa/Desktop/SentinelAI/sentinelai_users.db'
+# Par défaut : SQLite, dans le dossier du projet (chemin calculé, rien à modifier)
+SQLALCHEMY_DATABASE_URI = f"sqlite:///{(BASE_DIR / 'sentinelai_users.db').as_posix()}"
 ```
 
 **Modifier TTL sessions Redis** (optionnel) :
@@ -209,15 +210,15 @@ SESSION_TTL = 3600  # 1 heure
 
 **1. Créer données de démonstration** :
 ```bash
-python data/demo_data.py
+python -m data.demo_data
 ```
 
 **Sortie attendue** :
 ```
 Collections MongoDB nettoyées (logs, alerts)
 Table SQL nettoyée (users)
-Admin créé : admin / admin123 (ID: 1)
-Analyste créé : analyst / analyst123 (ID: 2)
+Admin créé : admin / admin (ID: 1)
+Analyste créé : abdellah / abdellah (ID: 2)
 100 logs créés
 30 alertes créées
 ```
@@ -448,7 +449,7 @@ SentinelAI/
 **POST** `/login`
 ```bash
 curl -X POST http://localhost:5000/login \
-  -d "username=admin&password=admin123"
+  -d "username=admin&password=admin"
 ```
 
 **GET** `/logout`
@@ -563,7 +564,7 @@ sudo apt-get install redis-server
 **Solution** :
 ```bash
 # Vérifier dataset existe
-ls C:\Users\oussa\Desktop\MachineLearningCSV\final_dataset.csv
+ls data/final_dataset.csv   # ou le fichier indiqué par la variable SENTINELAI_DATASET
 
 # Réentraîner modèle
 python ml/train_model.py

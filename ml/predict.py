@@ -2,7 +2,7 @@ import joblib
 import numpy as np
 import os
 
-MODEL_PATH = r'C:\Users\oussa\Desktop\SentinelAI\ml\model.pkl'
+MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model.pkl')
 
 class MLPredictor:
     def __init__(self):

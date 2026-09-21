@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, session, request
 from flask_login import LoginManager
-from config.config import Config, db, init_mongo_indexes, init_sql_db, test_redis_connection
+from config.config import Config, db, init_mongo_indexes, init_sql_db, test_redis_connection, REDIS_HOST, REDIS_PORT
 from models.user import User
 from services.redis_session import RedisSessionManager
 from routes.auth import auth_bp
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     print("Architecture Hybride:")
     print(f"   - Users: SQL ({Config.SQLALCHEMY_DATABASE_URI})")
     print(f"   - Logs & Alerts: MongoDB ({Config.MONGO_URI})")
-    print(f"   - Sessions: Redis (localhost:6379, TTL: {Config.SESSION_TTL}s)")
+    print(f"   - Sessions: Redis ({REDIS_HOST}:{REDIS_PORT}, TTL: {Config.SESSION_TTL}s)")
     print("="*60)
     print("Gestion Sessions:")
     print("   - Users: Accès à LEURS sessions uniquement")

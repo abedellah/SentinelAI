@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 logs_bp = Blueprint('logs', __name__, url_prefix='/logs')
 
-UPLOAD_FOLDER = r'C:\Users\oussa\Desktop\SentinelAI\uploads'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads')
 ALLOWED_EXTENSIONS = {'csv'}
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

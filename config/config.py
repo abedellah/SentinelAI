@@ -1,16 +1,22 @@
 import os
 import secrets
+from pathlib import Path
 from pymongo import MongoClient
 from flask_sqlalchemy import SQLAlchemy
 import redis
+
+# Racine du projet : tous les chemins en dépendent, rien n'est codé en dur
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Instance SQLAlchemy pour les users
 db = SQLAlchemy()
 
 # Instance Redis pour les sessions
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
 redis_client = redis.Redis(
-    host='localhost',
-    port=6379,
+    host=REDIS_HOST,
+    port=REDIS_PORT,
     db=0,
     decode_responses=True
 )
@@ -31,7 +37,7 @@ class Config:
     # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@localhost:5432/sentinelai_users'
     
     # Option 2: SQLite (simple, pour développement)
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Users/oussa/Desktop/SentinelAI/sentinelai_users.db'
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{(BASE_DIR / 'sentinelai_users.db').as_posix()}"
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
@@ -46,8 +52,8 @@ class Config:
     SESSION_TTL = 3600  # 1 heure
     
     # ML Model Path
-    MODEL_PATH = r'C:\Users\oussa\Desktop\SentinelAI\ml\model.pkl'
-    DATASET_PATH = r'C:\Users\oussa\Desktop\MachineLearningCSV\final_dataset.csv'
+    MODEL_PATH = str(BASE_DIR / 'ml' / 'model.pkl')
+    DATASET_PATH = os.environ.get('SENTINELAI_DATASET', str(BASE_DIR / 'data' / 'final_dataset.csv'))
     
     # Flask
     DEBUG = True
